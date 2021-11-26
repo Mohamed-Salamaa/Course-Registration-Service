@@ -1,3 +1,4 @@
-from .Course import Course
-from .courseStudent import Courses
-from .student import Student
+from .Course import *
+from .registration import *
+from .student import *
+from .teacher import *
