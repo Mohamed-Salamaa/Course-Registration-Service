@@ -48,7 +48,7 @@ class TestCourseAPI(DBTestCase):
             self.assertEqual(response.status_code, 200, response.data)
 
 
-    def test_get_teacher(self):
+    def test_get_course(self):
         with self.client:
             request_teacher = self.create_teacher()
             headers = {
@@ -77,7 +77,7 @@ class TestCourseAPI(DBTestCase):
             response = self.client.get(Course_API_PATH.format( id = course_id))
             self.assertEqual(response.status_code, 200, response.data)
 
-    def test_edit_teacher(self):
+    def test_edit_course(self):
         with self.client:
             request_teacher = self.create_teacher()
             headers = {
@@ -86,10 +86,10 @@ class TestCourseAPI(DBTestCase):
             response = self.client.post(Teachers_API_PATH, headers=headers, data=json.dumps(request_teacher))
             # print (response.status_code)
             self.assertEqual(response.status_code, 200, response.data)
+            # response_teacher = json.loads(response.data)
+
             teacher_id = json.loads(response.data)['id']
             request_course = self.create_course(teacher_id)
-
-
             headers = {
                 "Content-Type": "application/json"
             }
@@ -104,7 +104,7 @@ class TestCourseAPI(DBTestCase):
             response = self.client.put(Course_API_PATH.format(id =course_id), headers=headers, data=json.dumps(response_course))
             self.assertEqual(response.status_code, 200, response.data)
     
-    def test_delete_teacher(self):
+    def test_delete_course(self):
           with self.client:
             request_teacher = self.create_teacher()
             headers = {

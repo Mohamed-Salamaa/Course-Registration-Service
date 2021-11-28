@@ -6,12 +6,12 @@ from flask import jsonify , request
 from app.models.teacher import Teacher
 from .routes import Teacher_Management_namespace
 
-teacher_model = Teacher_Management_namespace.model('teacher_model' , {'id' : fields.Integer , 'teacher_name' : fields.String , 'teacher_email' : fields.String , 'teacher_phone' : fields.Integer})
+teacher_model = Teacher_Management_namespace.model('teacher_model' , {'id' : fields.String , 'teacher_name' : fields.String , 'teacher_email' : fields.String , 'teacher_phone' : fields.String})
 
-parser = reqparse.RequestParser()
-parser.add_argument('teacher_name' , type = str)
-parser.add_argument('teacher_email' , type = str)
-parser.add_argument('teacher_phone' , type = int)
+# parser = reqparse.RequestParser()
+# parser.add_argument('teacher_name' , type = str)
+# parser.add_argument('teacher_email' , type = str)
+# parser.add_argument('teacher_phone' , type = int)
 
 
 @Teacher_Management_namespace.route('/teacher')
@@ -40,9 +40,11 @@ class TeachersResource(Resource):
 @Teacher_Management_namespace.route('/teacher/<int:id>')
 class TeacherResource(Resource):
 
+    @Teacher_Management_namespace.marshal_list_with(teacher_model)
     def get(self , id ):
         teacher_obj = Teacher.query.filter_by(id = id ).first()
-        return jsonify({'teacher_name' : teacher_obj.teacher_name , 'teacher_email' : teacher_obj.teacher_email , 'teacher_phone' : teacher_obj.teacher_phone})
+        return teacher_obj 
+        # jsonify({'teacher_name' : teacher_obj.teacher_name , 'teacher_email' : teacher_obj.teacher_email , 'teacher_phone' : teacher_obj.teacher_phone})
 
 
     @Teacher_Management_namespace.expect(teacher_model)
@@ -52,7 +54,9 @@ class TeacherResource(Resource):
         Teacher.query.filter_by(id = id).update({'teacher_name' : args['teacher_name'] , 'teacher_email' : args['teacher_email'] , 'teacher_phone' : args['teacher_phone']})
         db.session.commit()
 
-        return teacher_model
+        teacher = Teacher.query.filter_by(id = id).first()
+
+        return teacher
     
 
     def delete(self , id):

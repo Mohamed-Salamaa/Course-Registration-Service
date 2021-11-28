@@ -9,6 +9,7 @@ Teacher_API_PATH = 'http://127.0.0.1:5000/teacher/teacher/{id}'
 
 class TestTeacherAPI(DBTestCase):
 
+    # Create a Teacher to Start Testing
     def create_teacher(self):
         return {
             'teacher_name' : "Teacher" , 
@@ -16,6 +17,7 @@ class TestTeacherAPI(DBTestCase):
             'teacher_phone' : 123 
         }
     
+    # Test Posting Teacher
     def test_success_add_teacher(self):
         with self.client:
             request_teacher = self.create_teacher()
@@ -25,7 +27,9 @@ class TestTeacherAPI(DBTestCase):
             response = self.client.post(Teachers_API_PATH, headers=headers, data=json.dumps(request_teacher))
             # print (response.status_code)
             self.assertEqual(response.status_code, 200, response.data)
-        
+
+
+    # Test Get Teachers from Database
     def test_get_teacher(self):
         with self.client:
             request_teacher = self.create_teacher()
@@ -43,6 +47,7 @@ class TestTeacherAPI(DBTestCase):
             response = self.client.get(Teacher_API_PATH.format( id = teacher_id))
             self.assertEqual(response.status_code, 200, response.data)
 
+    # Test Updating on a Teacher
     def test_edit_teacher(self):
         with self.client:
             request_teacher = self.create_teacher()
@@ -54,12 +59,12 @@ class TestTeacherAPI(DBTestCase):
             self.assertEqual(response.status_code, 200, response.data)
         
             response_teacher = json.loads(response.data)
-            # print(response_teacher)
             teacher_id = response_teacher.get('id')
             time.sleep(2)
             response = self.client.put(Teacher_API_PATH.format(id =teacher_id), headers=headers, data=json.dumps(response_teacher))
             self.assertEqual(response.status_code, 200, response.data)
     
+    # Test Deleting a Teacher
     def test_delete_teacher(self):
         with self.client:
             request_teacher = self.create_teacher()
