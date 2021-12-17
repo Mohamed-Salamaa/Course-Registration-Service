@@ -1,6 +1,5 @@
-from werkzeug.wrappers import response
 from app import  db
-from flask_restx import Resource, fields , reqparse 
+from flask_restx import Resource, fields  
 from flask import jsonify , request
 
 from app.models.Course import Course
@@ -9,7 +8,7 @@ from .teacher_api import teacher_model
 
 course_model = Course_Management_namespace.model('course_model', {'id' : fields.String ,'title': fields.String, 'price': fields.String, 'teacher_id' : fields.String , 'teacher' : fields.Nested(teacher_model)})
 
-@Course_Management_namespace.route('/course')
+@Course_Management_namespace.route('')
 class CoursesResource(Resource):
 
     # Get All Courses from DB
@@ -30,7 +29,7 @@ class CoursesResource(Resource):
         return new_course
 
 
-@Course_Management_namespace.route('/course/<int:id>')
+@Course_Management_namespace.route('/<int:id>')
 class CourseResource(Resource):
 
     # Get Course by ID 

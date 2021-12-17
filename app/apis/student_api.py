@@ -1,17 +1,13 @@
-from app import db
-from flask_restx import Resource, fields , reqparse , Namespace
+from app import db 
+from flask_restx import Resource, fields 
 from app.models.student import Student
 from flask import jsonify , request
 from .routes import Student_Management_namespace
 
-student_model = Student_Management_namespace.model('student_model', {'name': fields.String, 'email': fields.String,})
-
-parser = reqparse.RequestParser()
-parser.add_argument('name' , type =str)
-parser.add_argument('email' , type=str)
+student_model = Student_Management_namespace.model('student_model', {'name': fields.String, 'email': fields.String})
 
 
-@Student_Management_namespace.route('/student')
+@Student_Management_namespace.route('') 
 class StudentsResource(Resource):
 
     # Get All Student from DB
@@ -35,26 +31,27 @@ class StudentsResource(Resource):
 
         return new_student
 
-@Student_Management_namespace.route('/student/<int:id>')
+@Student_Management_namespace.route('/<int:id>')
+# @auth_required
 class StudentResource(Resource):
 
     # Get Student by ID 
     def get(self , id ):
         student_obj = Student.query.filter_by(id = id).first()
-        return jsonify({'name' : student_obj.name , 'email' : student_obj.email , })
+        return jsonify({'name' : student_obj.name , 'email' : student_obj.email })
 
     # To Update on a Student
     @Student_Management_namespace.expect(student_model)
     @Student_Management_namespace.marshal_with(student_model)
     def put (self , id):
         args = request.json
-        Student.query.filter_by(id = id).update({'name' : args['name'] , 'email' : args['email']})
+        Student.query.filter_by(id = id).update({'name' : args['name'] , 'email' : args['email'] })
         db.session.commit()
 
         return student_model
 
     # To Delete a Student
-    def delete (self , id):        
+    def delete (self , id):      
         Student.query.filter_by(id = id ).delete()
         db.session.commit()
 
