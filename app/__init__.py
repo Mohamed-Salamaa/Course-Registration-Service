@@ -12,8 +12,24 @@ authorization = {'apikey' : {
 app = Flask(__name__  )
 api = Api(app , title='Course System' , authorizations= authorization )
 
-app.config['SECRET_KEY'] ='mysecretkey' # To use encoding with my token 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://mohamed:root@localhost:5432/proj_course'
+import os, secrets
+
+# Secrets and DB config from env vars (with safe defaults)
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', secrets.token_urlsafe(32))
+
+db_user = os.getenv('DB_USER', '')
+db_pass = os.getenv('DB_PASSWORD', '')
+db_host = os.getenv('DB_HOST', 'localhost')
+db_port = os.getenv('DB_PORT', '5432')
+db_name = os.getenv('DB_NAME', 'Course-Registration-Service')
+
+if os.getenv('DATABASE_URL'):
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+else:
+    # Build URI only if user/pass provided; otherwise rely on peer/local auth
+    credentials = f"{db_user}:{db_pass}@" if db_user and db_pass else ""
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{credentials}{db_host}:{db_port}/{db_name}"
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 

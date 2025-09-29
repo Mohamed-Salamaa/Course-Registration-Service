@@ -24,11 +24,11 @@ class UserLogin(Resource):
             return make_response('Could not Verfiy' , 401 , {'WWW-Authenticate' :'Basic realm="Login Required"'})
             
         if check_password_hash(user.password , auth.password):
-            token = jwt.encode({'email' : user.email , 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)} , app.config['SECRET_KEY'])
+            token = jwt.encode({'email' : user.email , 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)} , app.config['SECRET_KEY'], algorithm='HS256')
             
-            User.query.filter_by(email=auth.username).update({'token' : token.decode('UTF-8')})
+            User.query.filter_by(email=auth.username).update({'token' : token})
             db.session.commit()
 
-            return jsonify({'token' : token.decode('UTF-8')})
+            return jsonify({'token' : token})
         
         return make_response('Could not Verfiy' , 401 , {'WWW-Authenticate' :'Basic realm="Login Required"'})

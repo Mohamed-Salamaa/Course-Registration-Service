@@ -13,19 +13,19 @@ def token_required(f):
 
         if 'X-API-KEY' in request.headers:
             token = request.headers['X-API-KEY']
-            print(token)
         if not token:
             return ({'message' : 'token is missing'}) , 401
         
         try:
-            data = jwt.decode(token , app.config['SECRET_KEY'])
+            data = jwt.decode(token , app.config['SECRET_KEY'], algorithms=['HS256'])
             current_user = User.query.filter_by(email = data['email']).first()
             
             if not current_user:
 
-                return ({'message' : 'token is not valid'})
+                return ({'message' : 'token is not valid'}), 401
 
-        except:
+        except Exception as e:
+            print(e)
             return ({'message' : 'token is not vaild'}),401
         
         return f(*args , **kwargs)
